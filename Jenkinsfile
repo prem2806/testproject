@@ -3,13 +3,14 @@ pipeline {
     stages {
         stage('Development') {
             steps {
-                sh 'docker build .'
+                sh 'docker build -t sample .'
+                sh 'docker ps'
+                sh 'docker run sample'
             }    
         }
         stage('Production') {
             steps {
-                sh 'docker-compose -f docker-compose-prod.yml up -d'
-                sh 'docker ps'
+                sh 'docker-compose up -d'
                 sh 'docker images'
             }    
         }
