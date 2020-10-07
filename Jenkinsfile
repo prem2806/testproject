@@ -22,7 +22,7 @@ pipeline {
         stage('Building Production Image') {
             steps {
                 script {
-                    dockerProdImage = docker.build("Dev-Image", "./Production")
+                    dockerProdImage = docker.build("Prod-Image", "./Production")
                 }
             }    
         }
