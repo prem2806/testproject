@@ -1,7 +1,7 @@
 pipeline {
     environment {
         registry = "premdocker1990/project20"
-        registryCredential = dockercred
+        registryCredential = docker-creds
         dockerDevImage = ''
         dockerProdImage = ''
     }
@@ -15,14 +15,14 @@ pipeline {
         stage('Building Development Image') {
             steps {
                 script {
-                    dockerDevImage = docker.build registry
+                    dockerDevImage = docker.build("Dev-Image")
                 }
             }    
         }
         stage('Building Production Image') {
             steps {
                 script {
-                    dockerProdImage = docker.build registry
+                    dockerProdImage = docker.build("Dev-Image", "./Production")
                 }
             }    
         }
@@ -36,7 +36,7 @@ pipeline {
                 script {
                     docker.withRegistry('', registryCredential) {
                     dockerDevImaage.push('Development')
-                    dockerProdImage.push('production')
+                    dockerProdImage.push('Production')
                     }
                 }  
             }
