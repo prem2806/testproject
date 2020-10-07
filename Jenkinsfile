@@ -1,18 +1,45 @@
 pipeline {
+    environment {
+        registry = "premdocker1990/project20"
+        registryCredential = dockercred
+        dockerDevImage = ''
+        dockerProdImage = ''
+    }
     agent any 
     stages {
-        stage('Development') {
+        stage('Cloning Git') {
             steps {
-                sh 'docker build -t sample .'
-                sh 'docker ps'
-                sh 'docker run sample'
+                git 'https://github.com/prem2806/testproject.git'
             }    
         }
-        stage('Production') {
+        stage('Building Development Image') {
             steps {
-                sh 'docker-compose up -d'
-                sh 'docker images'
+                script {
+                    dockerDevImage = docker.build registry
+                }
             }    
+        }
+        stage('Building Production Image') {
+            steps {
+                script {
+                    dockerProdImage = docker.build registry
+                }
+            }    
+        }
+        stage('Test Build') {
+                agent {
+                docker { image 'premdocker1990/project20' }
+            }
+        }
+        stage('Deploy Image') {
+            steps {
+                script {
+                    docker.withRegistry('', registryCredential) {
+                    dockerDevImaage.push('Development')
+                    dockerProdImage.push('production')
+                    }
+                }  
+            }
         }
     }
 }
